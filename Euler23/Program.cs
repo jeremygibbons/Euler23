@@ -1,42 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Euler23
 {
     class Program
     {
         static List<int> abundants;
-        static List<int> NotSumOfAbundants;
+
+        static int[] integers;
 
         static void Main(string[] args)
         {
             abundants = new List<int>();
-            NotSumOfAbundants = new List<int>();
+            integers = new int[28124];
+
+            List<int> SumsOfAbundants = new List<int>();
 
             FindAbundantNumbersBelowN(28111); //Smallest abundant num is 12, so limit is 28123 - 12
 
+            int sum = 0;
             foreach(int n in Enumerable.Range(1, 28123))
             {
-                if (CheckIfNIsSumOfAbundants(n) == false)
-                    NotSumOfAbundants.Add(n);
+                if(integers[n] == 0)
+                    sum += n;
             }
-            Console.WriteLine(NotSumOfAbundants.Sum());
-            Console.ReadLine();
-        }
 
-        private static bool CheckIfNIsSumOfAbundants(int n)
-        {
-            foreach(int a in abundants)
-            {
-                if (a > n)
-                    return false;
-                if (abundants.Contains(n - a))
-                    return true;
-            }
-            return false;
+            Console.WriteLine(sum);
+            Console.ReadLine();
         }
 
         private static void FindAbundantNumbersBelowN(int n)
@@ -44,9 +35,15 @@ namespace Euler23
 
             foreach(int i in Enumerable.Range(1, n))
             {
-                if(GetSumOfProperDivisors(i) > i )
+                if(GetSumOfProperDivisors(i) > 2 * i )
                 {
                     abundants.Add(i);
+                    foreach(int a in abundants)
+                    {
+                        if (a + i > 28123)
+                            continue;
+                        integers[a + i] = 1;
+                    }
                 }
             }
         }
@@ -64,7 +61,6 @@ namespace Euler23
                     divisors.Add(n / i);
                 }
             }
-            divisors.Remove(n);
             return divisors.Sum();
         }
     }
